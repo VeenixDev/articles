@@ -1,41 +1,24 @@
-interface BaseInterface {
-    // ...code here...
-}
-
-class InterfaceImpl implements BaseInterface {
-    // ...code here...
-}
-
-class MyGenericExampleClass<T extends BaseInterface> {
-    private readonly value: T;
-
-    constructor(value: T) {
-        this.value = value;
+class Retriever {
+    public retrieveRandomNumber(): number {
+        return Math.random();
     }
+}
 
-    public runFunctions(): string {
-        const keys = Object.getOwnPropertyNames(Object.getPrototypeOf(this.value))
+class ReflectionExampleClass {
+    public retrieveValuesFromClass(clazz: object): void {
+        const keys = Object.getOwnPropertyNames(Object.getPrototypeOf(clazz));
 
         for (const key of keys) {
-            Object.getPrototypeOf(this.value)[key].call(this, key);
+            const property = Object.getPrototypeOf(clazz)[key];
+            if (typeof property === 'function') {
+                property.call(clazz);
+                console.log(`Called function "${key}"`);
+            }
         }
-
-        return `Successfully ran ${keys.length} functions.`
     }
 }
 
-const myObj = new MyGenericExampleClass(new InterfaceImpl());
+const myObj = new ReflectionExampleClass();
+const myRetriever = new Retriever();
 
-console.log(myObj.runFunctions());
-
-class TempClass {
-    public fun(): void {
-        const keys = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
-
-        for (const key of keys) {
-            Object.getPrototypeOf(this)[key].call(this, key);
-        }
-
-        console.log(`Successfully ran ${keys.length} functions.`)
-    }
-}
+myObj.retrieveValuesFromClass(myRetriever);
